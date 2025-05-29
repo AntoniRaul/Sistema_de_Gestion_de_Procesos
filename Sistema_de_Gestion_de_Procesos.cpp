@@ -7,6 +7,42 @@ void registrarProceso() {
     // Aquí iría la lógica para registrar un proceso
     cout << "Función para registrar un proceso." << endl;
 }
+void eliminarProceso(int id) {
+    Proceso* temp = listaProcesos;
+    // Creamos un puntero que buscara el proceso que indiquemos
+    Proceso* anterior = NULL;
+    // Creamos otro puntero que guardará el nodo anterior que deseqamos eliminar 
+    while (temp && temp->id != id) {
+        anterior = temp;
+        temp = temp->siguiente;
+    }
+    // Con esto podemos eliminar un proceso de la lista cuando el ID coincide
+    if (!temp) {
+        cout << "Proceso no encontrado.\n";
+        return;
+    }
+    // Esto informa cuando no se encuentre ningun proceso con ese ID y termina la función
+    if (!anterior) listaProcesos = temp->siguiente;
+    else anterior->siguiente = temp->siguiente;
+    delete temp;
+    // Esto hace que libere la memoria del proceso eliminado
+    cout << "Proceso eliminado.\n";
+}
+void buscarProceso(int id) {
+    Proceso* temp = listaProcesos;
+    // Indicamos que comienza desde el inicio de la lista
+    while (temp) {
+        if (temp->id == id) {
+            cout << "ID: " << temp->id << ", Nombre: " << temp->nombre << ", Prioridad: " << temp->prioridad << endl;
+            return;
+        }
+        temp = temp->siguiente;
+    }
+    // Cuando encuentre el ID que busquemos lo imprimirá
+    cout << "Proceso no encontrado.\n";
+    // Nos informará si no lo encuentra
+}
+
 
 
 
