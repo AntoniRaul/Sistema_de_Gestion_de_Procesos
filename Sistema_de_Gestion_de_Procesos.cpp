@@ -4,30 +4,56 @@
 using namespace std;
 //ESTRUCTURA PRINCIPAL
 
-
 //Representa un proceso con ID, nombre, prioridad y puntero al siguiente
-struct Proceso 
-{
+struct Proceso { // Estructura que representa un proceso
+    // Atributos del proceso
     int id;
     string nombre;
     int prioridad;
-    Proceso* siguiente;
+    Proceso* siguiente; // Puntero al siguiente proceso en la lista
+
+    // Constructor para inicializar un nuevo proceso
+    Proceso(int ID, string Nombre, int Prioridad) {
+        id = ID;
+        nombre = Nombre;
+        prioridad = Prioridad;
+        siguiente = NULL; // Inicializa el puntero siguiente como NULL
+    }
 };
-Proceso* listaProcesos void registrarProceso() {
-    // Aqui esta donde se registrara el proceso de una manera breve y un poco basica por ahora
-   void registrarProceso() {
-    Proceso* nuevo = new Proceso();
-    
-    cout<<"Ingrese ID del proceso: ";
-    cin>>nuevo->id;
-    cout<<"Ingrese nombre del proceso (una sola palabra): ";
-    cin>>nuevo->nombre;
-    cout<<"Ingrese prioridad del proceso: ";
-    cin>>nuevo->prioridad;
-    nuevo->siguiente = listaProcesos;
-    listaProcesos = nuevo;
-    cout<<"Proceso registrado correctamente."<<"\n";
-}= NULL;
+
+// Función para agregar un nuevo proceso al final de la lista
+
+void agregarAlFinal(Proceso*& listaProcesos, int ID, string Nombre, int Prioridad) {
+    Proceso *nuevoProceso = new Proceso(ID, Nombre, Prioridad); // Crea un nuevo proceso con los datos proporcionados
+
+    if (listaProcesos == NULL) { // Verifica si la lista está vacía
+        listaProcesos = nuevoProceso; // Si está vacía, el nuevo proceso se convierte en el primer elemento de la lista
+    } else {
+        Proceso* temp = listaProcesos; // Crea un puntero temporal para recorrer la lista
+        while (temp->siguiente) { // Recorre la lista hasta el final
+            temp = temp->siguiente;
+        }
+        temp->siguiente = nuevoProceso; // Asigna el nuevo proceso al final de la lista
+        cout << "Proceso agregado al final de la lista.\n";
+    }
+}
+
+// Funcion para imprimir todos los procesos en la lista
+
+void imprimirProcesos(Proceso* listaProcesos) {
+    Proceso* temp = listaProcesos; // Crea un puntero temporal para recorrer la lista
+
+    if (!temp) { // Verifica si la lista está vacía
+        cout << "No hay procesos registrados.\n"; // Mensaje si la lista está vacía
+        return;
+    }
+    cout << "Lista de procesos:\n";
+    while (temp != NULL) { // Recorre la lista e imprime los datos de cada proceso
+        cout << "ID: " << temp->id << ", Nombre: " << temp->nombre << ", Prioridad: " << temp->prioridad << endl;
+        temp = temp->siguiente; // Avanza al siguiente proceso
+    }
+    cout << endl;
+}
 
 void eliminarProceso(int id) {
     Proceso* temp = listaProcesos;
@@ -65,19 +91,19 @@ void buscarProceso(int id) {
     // Nos informará si no lo encuentra
 }
 
-
-
-
 int main() {
 
-    int op;
+    Proceso* listaProcesos = NULL; // Inicializa la lista de procesos como vacía
+    int op, NumEl, id, prioridad;
+    string nombre;
     
     do {
         cout << "\n***Menu de Gestion***" << endl;
         cout << "[1]. Registrar proceso" << endl;
-        cout << "[2]. Buscar procesos" << endl;
-        cout << "[3]. Eliminar proceso" << endl;
-        cout << "[4]. Modificar proceso" << endl;
+        cout << "[2]. Imprimir procesos" << endl;
+        cout << "[3]. Buscar procesos" << endl;
+        cout << "[4]. Eliminar proceso" << endl;
+        cout << "[5]. Modificar proceso" << endl;
         cout << "[6]. Salir" << endl;
         cout << "*************************" << endl;
 
@@ -93,25 +119,36 @@ int main() {
 
         switch (op) { // Estructura de control que maneja las opciones del menú
             case 1:
-                cout << "Registrar proceso seleccionado." << endl;
-                // Aquí iría la lógica para registrar un proceso
+                // Pedimos al usuario cuantos procesos desea registrar
+                cout << "Cuantos procesos desea registrar? "; cin >> NumEl;
+
+                // Ingresamos los datos de cada proceso
+                for (int i = 0; i < NumEl; i++) {
+                    cout << "Ingrese el ID del proceso: "; cin >> id;
+                    cout << "Ingrese el nombre del proceso: "; cin >> nombre;
+                    cout << "Ingrese la prioridad del proceso: "; cin >> prioridad;
+
+                    // Llamamos a la función para agregar el proceso a la lista
+                    agregarAlFinal(listaProcesos, id, nombre, prioridad);
+                }
                 break;
             case 2:
-                cout << "Buscar procesos seleccionado." << endl;
-                // Aquí iría la lógica para buscar procesos
+                cout << "Imprimiendo procesos registrados..." << endl;
+                imprimirProcesos(listaProcesos);
                 break;
             case 3:
-                cout << "Eliminar proceso seleccionado." << endl;
-                // Aquí iría la lógica para eliminar un proceso
+                cout << "Ingrese el ID del proceso a buscar: "; cin >> id;
+                buscarProceso(listaProcesos, id);
                 break;
             case 4:
-                cout << "Modificar proceso seleccionado." << endl;
-                // Aquí iría la lógica para modificar un proceso
+                cout << "Ingrese el ID del proceso a eliminar: "; cin >> id;
+                eliminarProceso(listaProcesos, id);
+                break;
+            case 5:
                 break;
             case 6:
                 cout << "Saliendo del sistema de gestion de procesos." << endl;
-                break;S
+                break;
         }
-
-    }    while (op != 6); // Fin del bucle do-while
+    } while (op != 6); // Fin del bucle do-while
 }
