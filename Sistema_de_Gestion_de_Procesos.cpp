@@ -2,11 +2,20 @@
 #include <string>
 
 using namespace std;
+//ESTRUCTURA PRINCIPAL
 
-void registrarProceso() {
-    // Aquí iría la lógica para registrar un proceso
-    cout << "Función para registrar un proceso." << endl;
-}
+
+//Representa un proceso con ID, nombre, prioridad y puntero al siguiente
+struct Proceso 
+{
+    int id;
+    string nombre;
+    int prioridad;
+    Proceso* siguiente;
+};
+Proceso* listaProcesos = NULL;
+
+
 void eliminarProceso(int id) {
     Proceso* temp = listaProcesos;
     // Creamos un puntero que buscara el proceso que indiquemos
