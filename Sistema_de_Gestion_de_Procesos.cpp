@@ -151,6 +151,6 @@ int main() {
             case 6:
                 cout << "Saliendo del sistema de gestion de procesos." << endl;
                 break;
-        }
+        }as
     } while (op != 6); // Fin del bucle do-while
 }
