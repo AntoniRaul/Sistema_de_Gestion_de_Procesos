@@ -151,6 +151,10 @@ int main() {
             case 6:
                 cout << "Saliendo del sistema de gestion de procesos." << endl;
                 break;
-        }as
+        }
+
+        system("pause"); // Pausa la ejecución para que el usuario pueda ver los resultados
+        system("cls"); // Limpia la consola para una mejor visualización del menú
+        
     } while (op != 6); // Fin del bucle do-while
 }
