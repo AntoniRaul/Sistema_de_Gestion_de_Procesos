@@ -13,8 +13,21 @@ struct Proceso
     int prioridad;
     Proceso* siguiente;
 };
-Proceso* listaProcesos = NULL;
-
+Proceso* listaProcesos void registrarProceso() {
+    // Aqui esta donde se registrara el proceso de una manera breve y un poco basica por ahora
+   void registrarProceso() {
+    Proceso* nuevo = new Proceso();
+    
+    cout<<"Ingrese ID del proceso: ";
+    cin>>nuevo->id;
+    cout<<"Ingrese nombre del proceso (una sola palabra): ";
+    cin>>nuevo->nombre;
+    cout<<"Ingrese prioridad del proceso: ";
+    cin>>nuevo->prioridad;
+    nuevo->siguiente = listaProcesos;
+    listaProcesos = nuevo;
+    cout<<"Proceso registrado correctamente."<<"\n";
+}= NULL;
 
 void eliminarProceso(int id) {
     Proceso* temp = listaProcesos;
