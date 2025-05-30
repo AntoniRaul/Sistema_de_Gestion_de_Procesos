@@ -55,7 +55,7 @@ void imprimirProcesos(Proceso* listaProcesos) {
     cout << endl;
 }
 
-void eliminarProceso(int id) {
+void eliminarProceso(Proceso*& listaProcesos, int id) {
     Proceso* temp = listaProcesos;
     // Creamos un puntero que buscara el proceso que indiquemos
     Proceso* anterior = NULL;
@@ -76,7 +76,7 @@ void eliminarProceso(int id) {
     // Esto hace que libere la memoria del proceso eliminado
     cout << "Proceso eliminado.\n";
 }
-void buscarProceso(int id) {
+void buscarProceso(Proceso*& listaProcesos, int id) {
     Proceso* temp = listaProcesos;
     // Indicamos que comienza desde el inicio de la lista
     while (temp) {
@@ -124,6 +124,8 @@ int main() {
 
                 // Ingresamos los datos de cada proceso
                 for (int i = 0; i < NumEl; i++) {
+                    cout << "\nRegistro del proceso " << (i + 1) << endl;
+                    // Pedimos al usuario que ingrese los datos del proceso
                     cout << "Ingrese el ID del proceso: "; cin >> id;
                     cout << "Ingrese el nombre del proceso: "; cin >> nombre;
                     cout << "Ingrese la prioridad del proceso: "; cin >> prioridad;
