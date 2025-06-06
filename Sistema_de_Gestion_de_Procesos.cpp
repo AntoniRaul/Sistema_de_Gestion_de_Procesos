@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
+#include <windows.h> // Para usar funciones de Windows como Sleep()
 #define MAX 5
 
 using namespace std;
@@ -41,25 +41,25 @@ int final = -1; // Índice del último elemento en la cola
 // Funcion para encolar elementos de la memoria
 
 void encolar() {
-    if (tope == -1) {
+    if (tope == -1) { // Verifica si la pila está vacía
         cout << "La pila de memoria está vacía. No se puede encolar." << endl;
         return;
     }
     Proceso* nuevo = pila[tope]; // Toma el proceso del tope de la pila
     
-    if (frente == -1) {
+    if (frente == -1) { // Verifica si la cola está vacía
         frente = final = 0; // Si la cola está vacía, inicializa el frente
-        cola[0] = nuevo;
+        cola[0] = nuevo; // Agrega el nuevo proceso al frente de la cola
         return;
     } 
     
-    int pos = frente;
-    while (pos <= final && cola[pos]->prioridad >= nuevo->prioridad) {
+    int pos = frente; // Comienza desde el frente de la cola
+    while (pos <= final && cola[pos]->prioridad >= nuevo->prioridad) { // Compara las prioridades de los procesos
         pos++; // Encuentra la posición correcta para insertar el nuevo proceso según su prioridad
     }
 
     // Desplazar los elementos para hacer espacio
-    for (int i = final + 1; i > pos; i--) {
+    for (int i = final + 1; i > pos; i--) { // Organiza la cola
         cola[i] = cola[i - 1]; // Mueve los elementos hacia la derecha
     }
     cola[pos] = nuevo; // Inserta el nuevo proceso en la posición encontrada
@@ -69,40 +69,62 @@ void encolar() {
 // Funcion que elimina elementos de la cola por ID
 
 void eliminarDeColaPorID(int idEliminar) {
-    if (frente == -1) {
+    if (frente == -1) { // Verifica si la cola está vacía
         return;
     }
-    int pos = -1;
-    for (int i = frente; i <= final; i++) {
-        if (cola[i]->id == idEliminar) {
-            pos = i;
+    int pos = -1; // Variable para almacenar la posición del proceso a eliminar
+    for (int i = frente; i <= final; i++) { // Recorre la cola desde el frente hasta el final
+        if (cola[i]->id == idEliminar) { // Busca el proceso con el ID especificado
+            pos = i; // Guarda la posición del proceso a eliminar
             break;
         }
     }
-    if (pos == -1) return;
-    for (int i = pos; i < final; i++) {
-        cola[i] = cola[i + 1];
+    if (pos == -1) return; // Si no se encontró el proceso, sale de la función
+    for (int i = pos; i < final; i++) { // Desplaza los elementos hacia la izquierda para llenar el hueco
+        cola[i] = cola[i + 1]; // Mueve los elementos hacia la izquierda
     }
-    final--;
-    if (final < frente) frente = final = -1;
+    final--; // Decrementa el índice del final de la cola
+    if (final < frente) frente = final = -1; // Si la cola queda vacía, reinicia los índices
 }
 
 // Funcion para borrar todos los elementos de la cola
 
 void vaciarCola() {
-    frente = final = -1;
+    frente = final = -1; // Reinicia los índices de la cola para indicar que está vacía
+}
+
+// Ejecutar Procesos en la cola
+
+void ejecutarProcesosEnCola() {
+    if (frente == -1) { // Verifica si la cola está vacía
+        cout << "No hay procesos en la cola para ejecutar." << endl;
+        return;
+    }
+    cout << "Ejecutando procesos en orden de prioridad:" << endl;
+    while (frente != -1) { // Mientras haya procesos en la cola
+        cout << "Ejecutando -> ID: " << cola[frente]->id // Imprime el ID del proceso que se está ejecutando
+             << ", Nombre: " << cola[frente]->nombre // Imprime el nombre del proceso
+             << ", Prioridad: " << cola[frente]->prioridad << endl; // Imprime la prioridad del proceso
+        Sleep(1000); // Pausa de 1 segundo
+        if (frente == final) { // Verifica si es el último proceso en la cola
+            frente = final = -1; // Cola vacía
+        } else {
+            frente++; // Avanza al siguiente proceso en la cola
+        }
+    }
+    cout << "Todos los procesos han sido ejecutados." << endl;
 }
 
 //  Funcion para visualizar la cola de memoria
 
 void visualizarCola() {
-    if (frente == -1) {
+    if (frente == -1) { // Verifica si la cola está vacía
         cout << "La cola de CPU está vacía." << endl;
         return;
     } else {
         cout << "Orden de ejecucion" << endl;
         for (int i = frente; i <= final; i++) { // Recorre la cola desde el frente hasta el final
-            cout << "ID: " << cola[i]->id << ", Nombre: " << cola[i]->nombre << ", Prioridad: " << cola[i]->prioridad << endl;
+            cout << "ID: " << cola[i]->id << ", Nombre: " << cola[i]->nombre << ", Prioridad: " << cola[i]->prioridad << endl; // Imprime los detalles de cada proceso
         }
     }
 }
@@ -110,7 +132,7 @@ void visualizarCola() {
 // Funcion para agregar elementos a la pila
 
 void insertar(Proceso*& listaProcesos){
-    if (tope == MAX - 1) {
+    if (tope == MAX - 1) { // Verifica si la pila está llena
         cout << "Memoria llena. No se puede insertar mas elementos." << endl;
     } else {
         int id2;
@@ -119,7 +141,7 @@ void insertar(Proceso*& listaProcesos){
         while (temp != NULL) { // Recorre la lista de procesos
             if (temp->id == id2) { // Verifica si el ID del proceso coincide con el ID ingresado
                 pila[++tope] = temp; // Agrega el proceso a la pila
-                cout << "Proceso con ID " << id2 << " agregado a la memoria." << endl;
+                cout << "Proceso con ID " << id2 << " agregado a la memoria." << endl; 
                 encolar(); // Llama a la función para encolar el proceso en la cola de memoria
                 return; // Sale de la función una vez que se ha agregado el proceso
             }
@@ -132,35 +154,35 @@ void insertar(Proceso*& listaProcesos){
 // Funcion para eliminar procesos de la pila
 
 void eliminarDePila() {
-    if (tope == -1) {
+    if (tope == -1) { // Verifica si la pila está vacía
         cout << "La pila de memoria está vacía. No se puede eliminar ningún proceso." << endl;
         return;
     }
     cout << "Procesos en la pila de memoria:" << endl;
-    for (int i = 0; i <= tope; i++) {
+    for (int i = 0; i <= tope; i++) { // Recorre la pila e imprime los IDs de los procesos
         cout << "ID: " << pila[i]->id << ", Nombre: " << pila[i]->nombre << ", Prioridad: " << pila[i]->prioridad << endl;
     }
     int idEliminar;
     cout << "Ingrese el ID del proceso que desea quitar de la pila: ";
     cin >> idEliminar;
 
-    int pos = -1;
-    for (int i = 0; i <= tope; i++) {
-        if (pila[i]->id == idEliminar) {
-            pos = i;
+    int pos = -1; // Variable para almacenar la posición del proceso a eliminar
+    for (int i = 0; i <= tope; i++) { // Recorre la pila desde el inicio hasta el tope
+        if (pila[i]->id == idEliminar) { // Busca el proceso con el ID especificado
+            pos = i; // Guarda la posición del proceso a eliminar
             break;
         }
     }
     if (pos == -1) {
-        cout << "No se encontró un proceso con ese ID en la pila." << endl;
+        cout << "No se encontró un proceso con ese ID en la pila." << endl; // Mensaje si no se encuentra el proceso
         return;
     }
-    Proceso* procesoEliminado = pila[pos];
+    Proceso* procesoEliminado = pila[pos]; // Guarda el proceso que se va a eliminar
     // Desplazar los elementos para llenar el hueco
-    for (int i = pos; i < tope; i++) {
-        pila[i] = pila[i + 1];
+    for (int i = pos; i < tope; i++) { // Desplaza los elementos hacia la izquierda
+        pila[i] = pila[i + 1]; // Mueve los elementos hacia la izquierda
     }
-    tope--;
+    tope--; // Decrementa el índice del tope de la pila
     cout << "Proceso con ID " << procesoEliminado->id << " eliminado de la memoria." << endl;
     eliminarDeColaPorID(idEliminar); // <-- sincroniza la cola
 }
@@ -168,12 +190,12 @@ void eliminarDePila() {
 // Funcion para liberar la memoria de los procesos en la pila
 
 void liberarMemoria() {
-    if (tope == -1) {
+    if (tope == -1) { // Verifica si la pila está vacía
         cout << "La pila de memoria está vacía. No hay procesos para liberar." << endl;
         return;
     }
     // Solo vacía la pila, no elimina los procesos de la lista enlazada
-    tope = -1;
+    tope = -1; // Reinicia el tope de la pila a -1 para indicar que está vacía
     cout << "Todos los procesos han sido quitados de la memoria (pila) exitosamente." << endl;
     vaciarCola(); // <-- sincroniza la cola
 }
@@ -438,7 +460,7 @@ int main() {
                             visualizarCola();
                             break;
                         case 2:
-                            cout << "Ejecutando procesos..." << endl;
+                            ejecutarProcesosEnCola();
                             break;
                         case 3:
                             cout << "Saliendo del menu de gestion de memoria." << endl;
