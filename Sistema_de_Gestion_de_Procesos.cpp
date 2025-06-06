@@ -127,7 +127,6 @@ void buscarProceso(Proceso*& listaProcesos, int id) {
     while (temp) {
         if (temp->id == id) {
             cout << "ID: " << temp->id << ", Nombre: " << temp->nombre << ", Prioridad: " << temp->prioridad << endl;
-            return;
         }
         temp = temp->siguiente;
     }
@@ -147,7 +146,6 @@ void modificarProceso(Proceso*& listaProcesos, int id) {
             cout << "Ingrese la nueva prioridad del proceso: ";
             cin >> temp->prioridad;
             cout << "Proceso modificado exitosamente.\n";
-            return;
         }
         temp = temp->siguiente; // Avanzamos al siguiente proceso en la listaS
     }
