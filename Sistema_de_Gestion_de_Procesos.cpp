@@ -303,6 +303,26 @@ void modificarProceso(Proceso*& listaProcesos, int id) {
     // Nos informará si no lo encuentra
 }
 
+void cargarProcesos(Proceso*& listaProcesos) {
+    ifstream archivo("procesos.txt");
+    int id, prioridad;
+    string nombre;
+    while (archivo >> id >> nombre >> prioridad) {
+        agregarAlFinal(listaProcesos, id, nombre, prioridad);
+    }
+    archivo.close();
+}
+
+void guardarProcesos(Proceso* listaProcesos) {
+    ofstream archivo("procesos.txt");
+    Proceso* temp = listaProcesos;
+    while (temp) {
+        archivo << temp->id << " " << temp->nombre << " " << temp->prioridad << endl;
+        temp = temp->siguiente;
+    }
+    archivo.close();
+}
+
 void Menu() {
     cout << "\n***Menu de Gestion***" << endl;
     cout << "[1]. Gestion de Procesos" << endl;
@@ -344,6 +364,8 @@ int main() {
 
     Proceso* listaProcesos = NULL; // Inicializa la lista de procesos como vacía
     
+    cargarProcesos(listaProcesos); // Carga los procesos desde el archivo al iniciar el programa
+
     int op, op1, op2, op3, op4, NumEl, id, prioridad;
     string nombre;
     
@@ -404,6 +426,7 @@ int main() {
 
                             // Llamamos a la función para agregar el proceso a la lista
                             agregarAlFinal(listaProcesos, id, nombre, prioridad);
+                            guardarProcesos(listaProcesos); // Guardar después de agregar
                             }
                             break;
                         case 2:
@@ -415,12 +438,16 @@ int main() {
                             buscarProceso(listaProcesos, id);
                             break;
                         case 4:
+                            imprimirProcesos(listaProcesos);
                             cout << "Ingrese el ID del proceso a eliminar: "; cin >> id;
                             eliminarProceso(listaProcesos, id);
+                            guardarProcesos(listaProcesos); // Guardar después de eliminar
                             break;
                         case 5:
+                            imprimirProcesos(listaProcesos);
                             cout << "Ingrese el ID del proceso a modificar: "; cin >> id;
                             modificarProceso(listaProcesos, id);
+                            guardarProcesos(listaProcesos); // Guardar después de modificar
                             break;
                         case 6:
                             cout << "Saliendo del menu de gestion de procesos." << endl;
@@ -486,6 +513,9 @@ int main() {
                 cout << "Saliendo del sistema de gestion de procesos." << endl;
                 break;
         }
+
+        system("pause"); // Pausa la ejecución para que el usuario pueda ver los resultados antes de limpiar la consola
+        system("cls"); // Limpia la consola para una mejor visualización del menú
 
     } while (op != 4);
 
