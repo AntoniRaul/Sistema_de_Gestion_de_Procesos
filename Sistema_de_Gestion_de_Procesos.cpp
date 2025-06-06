@@ -5,18 +5,8 @@
 #define MAX 5
 
 using namespace std;
-// Colas 
-struct NodoCPU {
-    Proceso* proceso;
-    NodoCPU* siguiente;
-    NodoCPU(Proceso* p) {
-        proceso = p;
-        siguiente = NULL;
-    }
-};
 
-NodoCPU* frente = NULL;
-NodoCPU* fin = NULL;
+
 
 // Lista enlazada para almacenar los procesos
 
@@ -42,6 +32,81 @@ struct Proceso { // Estructura que representa un proceso
 Proceso* pila[MAX]; // Arreglo que representa la pila de memoria
 int tope = -1; // Variable que indica el índice del último elemento en la pila
 
+// Cola para gestionar la memoria
+
+Proceso* cola[MAX]; // Arreglo que representa la cola de memoria
+int frente = -1; // Índice del primer elemento en la cola
+int final = -1; // Índice del último elemento en la cola
+
+// Funcion para encolar elementos de la memoria
+
+void encolar() {
+    if (tope == -1) {
+        cout << "La pila de memoria está vacía. No se puede encolar." << endl;
+        return;
+    }
+    Proceso* nuevo = pila[tope]; // Toma el proceso del tope de la pila
+    
+    if (frente == -1) {
+        frente = final = 0; // Si la cola está vacía, inicializa el frente
+        cola[0] = nuevo;
+        return;
+    } 
+    
+    int pos = frente;
+    while (pos <= final && cola[pos]->prioridad >= nuevo->prioridad) {
+        pos++; // Encuentra la posición correcta para insertar el nuevo proceso según su prioridad
+    }
+
+    // Desplazar los elementos para hacer espacio
+    for (int i = final + 1; i > pos; i--) {
+        cola[i] = cola[i - 1]; // Mueve los elementos hacia la derecha
+    }
+    cola[pos] = nuevo; // Inserta el nuevo proceso en la posición encontrada
+    final++; // Incrementa el índice del final de la cola
+}
+
+// Funcion que elimina elementos de la cola por ID
+
+void eliminarDeColaPorID(int idEliminar) {
+    if (frente == -1) {
+        return;
+    }
+    int pos = -1;
+    for (int i = frente; i <= final; i++) {
+        if (cola[i]->id == idEliminar) {
+            pos = i;
+            break;
+        }
+    }
+    if (pos == -1) return;
+    for (int i = pos; i < final; i++) {
+        cola[i] = cola[i + 1];
+    }
+    final--;
+    if (final < frente) frente = final = -1;
+}
+
+// Funcion para borrar todos los elementos de la cola
+
+void vaciarCola() {
+    frente = final = -1;
+}
+
+//  Funcion para visualizar la cola de memoria
+
+void visualizarCola() {
+    if (frente == -1) {
+        cout << "La cola de CPU está vacía." << endl;
+        return;
+    } else {
+        cout << "Orden de ejecucion" << endl;
+        for (int i = frente; i <= final; i++) { // Recorre la cola desde el frente hasta el final
+            cout << "ID: " << cola[i]->id << ", Nombre: " << cola[i]->nombre << ", Prioridad: " << cola[i]->prioridad << endl;
+        }
+    }
+}
+
 // Funcion para agregar elementos a la pila
 
 void insertar(Proceso*& listaProcesos){
@@ -55,9 +120,7 @@ void insertar(Proceso*& listaProcesos){
             if (temp->id == id2) { // Verifica si el ID del proceso coincide con el ID ingresado
                 pila[++tope] = temp; // Agrega el proceso a la pila
                 cout << "Proceso con ID " << id2 << " agregado a la memoria." << endl;
-
-                encolarCPU(pila[tope]);
-                
+                encolar(); // Llama a la función para encolar el proceso en la cola de memoria
                 return; // Sale de la función una vez que se ha agregado el proceso
             }
             temp = temp->siguiente; // Avanza al siguiente proceso en la lista
@@ -99,6 +162,7 @@ void eliminarDePila() {
     }
     tope--;
     cout << "Proceso con ID " << procesoEliminado->id << " eliminado de la memoria." << endl;
+    eliminarDeColaPorID(idEliminar); // <-- sincroniza la cola
 }
 
 // Funcion para liberar la memoria de los procesos en la pila
@@ -111,6 +175,7 @@ void liberarMemoria() {
     // Solo vacía la pila, no elimina los procesos de la lista enlazada
     tope = -1;
     cout << "Todos los procesos han sido quitados de la memoria (pila) exitosamente." << endl;
+    vaciarCola(); // <-- sincroniza la cola
 }
 
 // Funcion para visualizar los procesos en la pila
@@ -124,58 +189,6 @@ void visualizarPila() {
             cout << "ID: " << pila[i]->id << ", Nombre: " << pila[i]->nombre << ", Prioridad: " << pila[i]->prioridad << endl;
         }
     }
-}
-
-//Creamos la funcion encolar con la prioridad de mayor
-void encolarCPU(Proceso* proceso) {
-    NodoCPU* nuevo = new NodoCPU(proceso);
-    
-    if (!frente || proceso->prioridad > frente->proceso->prioridad) {
-        // Insertar al inicio si la cola está vacía o la prioridad es mayor que el primero
-        nuevo->siguiente = frente;
-        frente = nuevo;
-        if (!fin) fin = nuevo;
-    } else {
-        // Insertar en la posición correcta según prioridad
-        NodoCPU* actual = frente;
-        while (actual->siguiente && actual->siguiente->proceso->prioridad >= proceso->prioridad) {
-            actual = actual->siguiente;
-        }
-        nuevo->siguiente = actual->siguiente;
-        actual->siguiente = nuevo;
-        if (!nuevo->siguiente) fin = nuevo;  // Si se inserta al final, actualizar fin
-    }
-
-    cout << "Proceso encolado a la CPU segun su prioridad.\n";
-}
-
-void mostrarOrdenEjecucion() {
-    if (!frente) {
-        cout << "No hay procesos en la cola de la CPU.\n";
-        return;
-    }
-    NodoCPU* temp = frente;
-    cout << "Orden de ejecucion de procesos:\n";
-    while (temp) {
-        cout << "ID: " << temp->proceso->id << ", Nombre: " << temp->proceso->nombre << ", Prioridad: " << temp->proceso->prioridad << endl;
-        temp = temp->siguiente;
-    }
-}
-
-void ejecutarProcesos() {
-    if (!frente) {
-        cout << "No hay procesos para ejecutar.\n";
-        return;
-    }
-    cout << "Ejecutando procesos...\n";
-    while (frente) {
-        cout << "Ejecutando proceso ID: " << frente->proceso->id << " (" << frente->proceso->nombre << ")\n";
-        NodoCPU* temp = frente;
-        frente = frente->siguiente;
-        delete temp;
-    }
-    fin = NULL;
-    cout << "Todos los procesos han sido ejecutados.\n";
 }
 
 // Función para agregar un nuevo proceso al final de la lista
@@ -422,12 +435,10 @@ int main() {
                     } while (op4 < 1 || op4 > 3);
                     switch (op4) {
                         case 1:
-                            cout << "Verificando orden de ejecucion..." << endl;
-                            mostrarOrdenEjecucion();
+                            visualizarCola();
                             break;
                         case 2:
                             cout << "Ejecutando procesos..." << endl;
-                             ejecutarProcesos();
                             break;
                         case 3:
                             cout << "Saliendo del menu de gestion de memoria." << endl;
