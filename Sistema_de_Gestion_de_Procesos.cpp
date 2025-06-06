@@ -384,9 +384,23 @@ int main() {
                             for (int i = 0; i < NumEl; i++) {
                             cout << "\nRegistro del proceso " << (i + 1) << endl;
                             // Pedimos al usuario que ingrese los datos del proceso
-                            cout << "Ingrese el ID del proceso: "; cin >> id;
+                            do {
+                                cout << "Ingrese el ID del proceso: "; cin >> id;
+
+                                if (id <= 0) { // Verifica que el ID sea un número positivo
+                                    cout << "El ID debe ser un número positivo. Intente de nuevo." << endl;
+                                }
+                            } while (id <= 0);
+
                             cout << "Ingrese el nombre del proceso: "; cin >> nombre;
-                            cout << "Ingrese la prioridad del proceso: "; cin >> prioridad;
+
+                            do {
+                                cout << "Ingrese la prioridad del proceso (1-10): "; cin >> prioridad;
+
+                                if (prioridad < 1 || prioridad > 10) { // Verifica que la prioridad esté en el rango válido
+                                    cout << "La prioridad debe estar entre 1 y 10. Intente de nuevo." << endl;
+                                }
+                            } while (prioridad < 1 || prioridad > 10);
 
                             // Llamamos a la función para agregar el proceso a la lista
                             agregarAlFinal(listaProcesos, id, nombre, prioridad);
