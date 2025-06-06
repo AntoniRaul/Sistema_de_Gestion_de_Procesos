@@ -55,6 +55,9 @@ void insertar(Proceso*& listaProcesos){
             if (temp->id == id2) { // Verifica si el ID del proceso coincide con el ID ingresado
                 pila[++tope] = temp; // Agrega el proceso a la pila
                 cout << "Proceso con ID " << id2 << " agregado a la memoria." << endl;
+
+                encolarCPU(pila[tope]);
+                
                 return; // Sale de la función una vez que se ha agregado el proceso
             }
             temp = temp->siguiente; // Avanza al siguiente proceso en la lista
@@ -123,14 +126,27 @@ void visualizarPila() {
     }
 }
 
+//Creamos la funcion encolar con la prioridad de mayor
 void encolarCPU(Proceso* proceso) {
     NodoCPU* nuevo = new NodoCPU(proceso);
-    if (!frente) frente = fin = nuevo;
-    else {
-        fin->siguiente = nuevo;
-        fin = nuevo;
+    
+    if (!frente || proceso->prioridad > frente->proceso->prioridad) {
+        // Insertar al inicio si la cola está vacía o la prioridad es mayor que el primero
+        nuevo->siguiente = frente;
+        frente = nuevo;
+        if (!fin) fin = nuevo;
+    } else {
+        // Insertar en la posición correcta según prioridad
+        NodoCPU* actual = frente;
+        while (actual->siguiente && actual->siguiente->proceso->prioridad >= proceso->prioridad) {
+            actual = actual->siguiente;
+        }
+        nuevo->siguiente = actual->siguiente;
+        actual->siguiente = nuevo;
+        if (!nuevo->siguiente) fin = nuevo;  // Si se inserta al final, actualizar fin
     }
-    cout << "Proceso encolado a la CPU.\n";
+
+    cout << "Proceso encolado a la CPU segun su prioridad.\n";
 }
 
 void mostrarOrdenEjecucion() {
