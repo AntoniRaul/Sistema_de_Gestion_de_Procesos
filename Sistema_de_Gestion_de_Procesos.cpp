@@ -513,10 +513,8 @@ int main() {
                 cout << "Saliendo del sistema de gestion de procesos." << endl;
                 break;
         }
-
         system("pause"); // Pausa la ejecución para que el usuario pueda ver los resultados antes de limpiar la consola
         system("cls"); // Limpia la consola para una mejor visualización del menú
-
-    } while (op != 4);
-
+    } 
+    while (op != 4);
 }
