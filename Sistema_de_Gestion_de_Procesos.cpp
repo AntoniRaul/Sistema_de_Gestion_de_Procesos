@@ -5,8 +5,18 @@
 #define MAX 5
 
 using namespace std;
+// Colas 
+struct NodoCPU {
+    Proceso* proceso;
+    NodoCPU* siguiente;
+    NodoCPU(Proceso* p) {
+        proceso = p;
+        siguiente = NULL;
+    }
+};
 
-
+NodoCPU* frente = NULL;
+NodoCPU* fin = NULL;
 
 // Lista enlazada para almacenar los procesos
 
@@ -111,6 +121,45 @@ void visualizarPila() {
             cout << "ID: " << pila[i]->id << ", Nombre: " << pila[i]->nombre << ", Prioridad: " << pila[i]->prioridad << endl;
         }
     }
+}
+
+void encolarCPU(Proceso* proceso) {
+    NodoCPU* nuevo = new NodoCPU(proceso);
+    if (!frente) frente = fin = nuevo;
+    else {
+        fin->siguiente = nuevo;
+        fin = nuevo;
+    }
+    cout << "Proceso encolado a la CPU.\n";
+}
+
+void mostrarOrdenEjecucion() {
+    if (!frente) {
+        cout << "No hay procesos en la cola de la CPU.\n";
+        return;
+    }
+    NodoCPU* temp = frente;
+    cout << "Orden de ejecucion de procesos:\n";
+    while (temp) {
+        cout << "ID: " << temp->proceso->id << ", Nombre: " << temp->proceso->nombre << ", Prioridad: " << temp->proceso->prioridad << endl;
+        temp = temp->siguiente;
+    }
+}
+
+void ejecutarProcesos() {
+    if (!frente) {
+        cout << "No hay procesos para ejecutar.\n";
+        return;
+    }
+    cout << "Ejecutando procesos...\n";
+    while (frente) {
+        cout << "Ejecutando proceso ID: " << frente->proceso->id << " (" << frente->proceso->nombre << ")\n";
+        NodoCPU* temp = frente;
+        frente = frente->siguiente;
+        delete temp;
+    }
+    fin = NULL;
+    cout << "Todos los procesos han sido ejecutados.\n";
 }
 
 // Función para agregar un nuevo proceso al final de la lista
@@ -358,9 +407,11 @@ int main() {
                     switch (op4) {
                         case 1:
                             cout << "Verificando orden de ejecucion..." << endl;
+                            mostrarOrdenEjecucion();
                             break;
                         case 2:
                             cout << "Ejecutando procesos..." << endl;
+                             ejecutarProcesos();
                             break;
                         case 3:
                             cout << "Saliendo del menu de gestion de memoria." << endl;
