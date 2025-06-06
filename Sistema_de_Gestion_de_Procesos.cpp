@@ -53,6 +53,53 @@ void insertar(Proceso*& listaProcesos){
     }
 }
 
+// Funcion para eliminar procesos de la pila
+
+void eliminarDePila() {
+    if (tope == -1) {
+        cout << "La pila de memoria está vacía. No se puede eliminar ningún proceso." << endl;
+        return;
+    }
+    cout << "Procesos en la pila de memoria:" << endl;
+    for (int i = 0; i <= tope; i++) {
+        cout << "ID: " << pila[i]->id << ", Nombre: " << pila[i]->nombre << ", Prioridad: " << pila[i]->prioridad << endl;
+    }
+    int idEliminar;
+    cout << "Ingrese el ID del proceso que desea quitar de la pila: ";
+    cin >> idEliminar;
+
+    int pos = -1;
+    for (int i = 0; i <= tope; i++) {
+        if (pila[i]->id == idEliminar) {
+            pos = i;
+            break;
+        }
+    }
+    if (pos == -1) {
+        cout << "No se encontró un proceso con ese ID en la pila." << endl;
+        return;
+    }
+    Proceso* procesoEliminado = pila[pos];
+    // Desplazar los elementos para llenar el hueco
+    for (int i = pos; i < tope; i++) {
+        pila[i] = pila[i + 1];
+    }
+    tope--;
+    cout << "Proceso con ID " << procesoEliminado->id << " eliminado de la memoria." << endl;
+}
+
+// Funcion para liberar la memoria de los procesos en la pila
+
+void liberarMemoria() {
+    if (tope == -1) {
+        cout << "La pila de memoria está vacía. No hay procesos para liberar." << endl;
+        return;
+    }
+    // Solo vacía la pila, no elimina los procesos de la lista enlazada
+    tope = -1;
+    cout << "Todos los procesos han sido quitados de la memoria (pila) exitosamente." << endl;
+}
+
 // Funcion para visualizar los procesos en la pila
 
 void visualizarPila() {
@@ -127,6 +174,7 @@ void buscarProceso(Proceso*& listaProcesos, int id) {
     while (temp) {
         if (temp->id == id) {
             cout << "ID: " << temp->id << ", Nombre: " << temp->nombre << ", Prioridad: " << temp->prioridad << endl;
+            return;
         }
         temp = temp->siguiente;
     }
@@ -146,6 +194,7 @@ void modificarProceso(Proceso*& listaProcesos, int id) {
             cout << "Ingrese la nueva prioridad del proceso: ";
             cin >> temp->prioridad;
             cout << "Proceso modificado exitosamente.\n";
+            return;
         }
         temp = temp->siguiente; // Avanzamos al siguiente proceso en la listaS
     }
@@ -179,8 +228,7 @@ void Menu3() {
     cout << "[2]. Eliminar de memoria" << endl;
     cout << "[3]. Liberar memoria" << endl;
     cout << "[4]. Visualizar memoria" << endl;
-    cout << "[5]. Buscar memoria" << endl;
-    cout << "[6]. Salir" << endl;
+    cout << "[5]. Salir" << endl;
     cout << "*************************" << endl;
 }
 
@@ -273,10 +321,10 @@ int main() {
                     Menu3();
                     do {
                         cout << "Ingrese una opcion: "; cin >> op3;
-                        if (op3 < 1 || op3 > 6) {
+                        if (op3 < 1 || op3 > 5) {
                             cout << "Opcion invalida. Por favor, intente de nuevo." << endl;
                         }
-                    } while (op3 < 1 || op3 > 6);
+                    } while (op3 < 1 || op3 > 5);
                     switch (op3) {
                         case 1:
                             cout << "\n" << endl;
@@ -284,21 +332,19 @@ int main() {
                             insertar(listaProcesos);
                             break;
                         case 2:
-                            cout << "Eliminando de Memoria de procesos..." << endl;
+                            eliminarDePila();
                             break;
                         case 3:
-                            cout << "Liberando Memoria de procesos..." << endl;
+                            liberarMemoria();
+                            cout << "Memoria liberada." << endl;
                             break;
                         case 4:
                             visualizarPila();
                             break;
                         case 5:
-                            
-                            break;
-                        case 6:
                             cout << "Saliendo del menu de gestion de memoria." << endl;
                     }
-                } while (op3 != 6);
+                } while (op3 != 5);
                 break;
             case 3:
                 do {
